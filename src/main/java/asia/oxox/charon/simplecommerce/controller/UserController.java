@@ -1,9 +1,8 @@
 package asia.oxox.charon.simplecommerce.controller;
 
-import asia.oxox.charon.simplecommerce.entity.DO.User;
-import asia.oxox.charon.simplecommerce.entity.VO.UserInfoVo;
 import asia.oxox.charon.simplecommerce.entity.DTO.UserLoginDto;
 import asia.oxox.charon.simplecommerce.entity.VO.Result;
+import asia.oxox.charon.simplecommerce.entity.VO.UserInfoVo;
 import asia.oxox.charon.simplecommerce.service.UserService;
 import asia.oxox.charon.simplecommerce.utils.UserHolder;
 import io.swagger.annotations.Api;
@@ -29,12 +28,6 @@ public class UserController {
 
     private UserService userService;
 
-    /**
-     * 登录接口
-     *
-     * @param userDto
-     * @return
-     */
     @ApiOperation(value = "登录操作")
     @PostMapping("/login")
     public Result login(@RequestBody @Validated UserLoginDto userDto) {

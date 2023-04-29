@@ -17,4 +17,6 @@ public class RedisConstants {
     public static final String CACHE_USER_KEY = "cache:user:";
     public static final Long CACHE_USER_TTL = 120L;
 
+    public static final String GOODS_STOCK_KEY = "goods:stock:";
+
 }
