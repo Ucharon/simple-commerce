@@ -9,9 +9,9 @@ spring:
     date-format: 'yyyy-MM-dd HH:mm:ss'
     time-zone: 'GMT+8'
 #    default-property-inclusion: non_null
-    mapper:
+#    mapper:
       # 格式化JSON按照字典顺序排序
-      sort-properties-alphabetically: true
+#      sort-properties-alphabetically: true
   config:
     use-legacy-processing: true
   main:

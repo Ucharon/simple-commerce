@@ -1,22 +1,21 @@
 package asia.oxox.charon.simplecommerce.service.impl;
 
+import asia.oxox.charon.simplecommerce.entity.DO.User;
 import asia.oxox.charon.simplecommerce.entity.DTO.UserLoginDto;
 import asia.oxox.charon.simplecommerce.enums.ResultCodeEnum;
 import asia.oxox.charon.simplecommerce.exception.BizException;
+import asia.oxox.charon.simplecommerce.mapper.UserMapper;
+import asia.oxox.charon.simplecommerce.service.RedisService;
+import asia.oxox.charon.simplecommerce.service.UserService;
+import cn.hutool.core.lang.UUID;
 import cn.hutool.crypto.digest.DigestUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import asia.oxox.charon.simplecommerce.entity.DO.User;
-import asia.oxox.charon.simplecommerce.service.UserService;
-import asia.oxox.charon.simplecommerce.mapper.UserMapper;
 import lombok.AllArgsConstructor;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 
 import static asia.oxox.charon.simplecommerce.constants.RedisConstants.LOGIN_USER_KEY;
 import static asia.oxox.charon.simplecommerce.constants.RedisConstants.LOGIN_USER_TTL;
@@ -31,7 +30,7 @@ import static asia.oxox.charon.simplecommerce.constants.RedisConstants.LOGIN_USE
 public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         implements UserService {
 
-    private StringRedisTemplate redisTemplate;
+    private RedisService redisService;
 
     @Override
     public Map<String, String> login(UserLoginDto userDto) {
@@ -46,14 +45,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         }
 
         //生成token
-        String token = UUID.randomUUID().toString();
+        String token = UUID.randomUUID().toString(true);
         Map<String, String> map = new HashMap<>();
         map.put("token", token);
 
         //将token：id存入redis
         String key = LOGIN_USER_KEY + token;
-        redisTemplate.opsForValue().set(key, String.valueOf(user.getId()), LOGIN_USER_TTL, TimeUnit.MINUTES);
-
+        redisService.set(key, user.getId(), LOGIN_USER_TTL);
         return map;
     }
 }

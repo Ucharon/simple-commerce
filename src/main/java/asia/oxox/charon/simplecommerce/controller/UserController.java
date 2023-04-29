@@ -1,16 +1,17 @@
 package asia.oxox.charon.simplecommerce.controller;
 
+import asia.oxox.charon.simplecommerce.entity.DO.User;
+import asia.oxox.charon.simplecommerce.entity.VO.UserInfoVo;
 import asia.oxox.charon.simplecommerce.entity.DTO.UserLoginDto;
 import asia.oxox.charon.simplecommerce.entity.VO.Result;
 import asia.oxox.charon.simplecommerce.service.UserService;
+import asia.oxox.charon.simplecommerce.utils.UserHolder;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import xin.altitude.cms.common.util.BeanCopyUtils;
 
 import java.util.Map;
 
@@ -39,5 +40,11 @@ public class UserController {
     public Result login(@RequestBody @Validated UserLoginDto userDto) {
         Map<String, String> res = userService.login(userDto);
         return Result.success(res);
+    }
+
+    @ApiOperation("获取个人信息")
+    @GetMapping("/info")
+    public Result getInfo() {
+        return Result.success(BeanCopyUtils.copyProperties(UserHolder.getUser(), UserInfoVo.class));
     }
 }

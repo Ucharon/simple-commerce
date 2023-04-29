@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
+import java.math.BigDecimal;
+
 import lombok.Data;
 
 /**
@@ -34,6 +36,11 @@ public class User implements Serializable {
      * 密码
      */
     private String password;
+
+    /**
+     * 余额
+     */
+    private BigDecimal balance;
 
     /**
      * 邮箱

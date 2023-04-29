@@ -14,4 +14,7 @@ public class RedisConstants {
     //public static final Long LOGIN_USER_TTL = 600000L;
     public static final Long LOGIN_USER_TTL = 120L;
 
+    public static final String CACHE_USER_KEY = "cache:user:";
+    public static final Long CACHE_USER_TTL = 120L;
+
 }
