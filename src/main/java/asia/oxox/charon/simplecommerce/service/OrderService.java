@@ -14,4 +14,6 @@ public interface OrderService extends IService<Order> {
     Long orderGoods(Long goodsId);
 
     void createOrder(GoodsOrderDto goodsOrderDto);
+
+    void refundOrder(Long orderId) throws InterruptedException;
 }

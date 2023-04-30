@@ -1,21 +1,25 @@
 package asia.oxox.charon.simplecommerce.service.impl;
 
 import asia.oxox.charon.simplecommerce.entity.DO.Goods;
+import asia.oxox.charon.simplecommerce.entity.DO.Order;
 import asia.oxox.charon.simplecommerce.entity.DO.User;
+import asia.oxox.charon.simplecommerce.entity.mq.BalanceUpdateDto;
 import asia.oxox.charon.simplecommerce.entity.mq.GoodsOrderDto;
 import asia.oxox.charon.simplecommerce.enums.OrderStatusEnum;
 import asia.oxox.charon.simplecommerce.enums.ResultCodeEnum;
 import asia.oxox.charon.simplecommerce.exception.BizException;
+import asia.oxox.charon.simplecommerce.mapper.OrderMapper;
 import asia.oxox.charon.simplecommerce.service.GoodsService;
+import asia.oxox.charon.simplecommerce.service.OrderService;
 import asia.oxox.charon.simplecommerce.service.RedisService;
 import asia.oxox.charon.simplecommerce.service.UserService;
+import asia.oxox.charon.simplecommerce.utils.ArithmeticUtils;
 import asia.oxox.charon.simplecommerce.utils.RedisIdGenerator;
+import asia.oxox.charon.simplecommerce.utils.TimeUtils;
 import asia.oxox.charon.simplecommerce.utils.UserHolder;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import asia.oxox.charon.simplecommerce.entity.DO.Order;
-import asia.oxox.charon.simplecommerce.service.OrderService;
-import asia.oxox.charon.simplecommerce.mapper.OrderMapper;
 import lombok.AllArgsConstructor;
+import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.core.io.ClassPathResource;
@@ -24,11 +28,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import xin.altitude.cms.common.util.BeanCopyUtils;
 
+import java.math.BigDecimal;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
-import static asia.oxox.charon.simplecommerce.constants.MQPrefixConstants.ORDER_CREATE_QUEUE;
-import static asia.oxox.charon.simplecommerce.constants.MQPrefixConstants.ORDER_EVENT_EXCHANGE;
-import static asia.oxox.charon.simplecommerce.constants.RedisConstants.LOCK_ORDER_KEY;
+import static asia.oxox.charon.simplecommerce.constants.MQPrefixConstants.*;
+import static asia.oxox.charon.simplecommerce.constants.RedisConstants.*;
 
 /**
  * @author charon
@@ -45,6 +50,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order>
     private RabbitTemplate rabbitTemplate;
     private GoodsService goodsService;
     private UserService userService;
+    private RedissonClient redissonClient;
 
     private static final DefaultRedisScript<Long> ORDER_SCRIPT;
 
@@ -82,6 +88,17 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order>
                         .price(goods.getPrice())
                         .build());
 
+        //4.3 这个消息队列用于更新余额变动明细和扣减数据库的余额
+        rabbitTemplate.convertAndSend(BALANCE_EVENT_EXCHANGE, BALANCE_CHANGE_QUEUE,
+                BalanceUpdateDto.builder()
+                        .userId(user.getId())
+                        .orderId(orderId)
+                        .changeBalance(ArithmeticUtils.sub("0.00", goods.getPrice().toString()))
+                        .statusEnum(OrderStatusEnum.COMPLETED.getStatusCode())
+                        .build()
+        );
+
+
         return orderId;
     }
 
@@ -94,18 +111,58 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order>
                 .setSql("stock=stock-1")
                 .update();
 
-        //2. 扣减余额
-        userService.lambdaUpdate()
-                .eq(User::getId, goodsOrderDto.getUserId())
-                .setSql("balance=balance-" + goodsOrderDto.getPrice())
-                .update();
-
-        //3. 初始化订单状态
+        //2. 初始化订单状态
         Order order = BeanCopyUtils.copyProperties(goodsOrderDto, Order.class);
         order.setStatusEnum(OrderStatusEnum.COMPLETED);
 
-        //4. 创建订单
+        //3. 创建订单
         save(order);
+    }
+
+    @Override
+    public void refundOrder(Long orderId) throws InterruptedException {
+        //0. 判断该订单是否存在
+        Order order = Optional.ofNullable(getById(getById(orderId)))
+                .orElseThrow(() -> new BizException(ResultCodeEnum.ORDER_DOES_NOT_EXIST));
+
+        //1. 创建锁对象，并获取锁
+        RLock lock = redissonClient
+                .getLock(LOCK_ORDER_KEY + orderId);
+        boolean isLock = lock
+                .tryLock(LOCK_ORDER_TTL, TimeUnit.SECONDS);
+        //2. 判断锁是否获取成功
+        if (!isLock) {
+            //2.1 获取失败，提醒用户稍后再试
+            throw new BizException(ResultCodeEnum.SERVICE_BUSY);
+        }
+        //2.2获取锁成功
+        //3. 开始执行退款业务
+        try {
+            //3.1 修改订单信息，并存入数据库
+            order.setStatusEnum(OrderStatusEnum.REFUNDED);
+            order.setRefundTime(TimeUtils.getCurrentTime());
+            updateById(order);
+
+            //3.2 余额退回，更新redis即可
+            String balanceKey = USER_BALANCE_KEY + order.getUserId();
+            BigDecimal balance = (BigDecimal) redisService.get(balanceKey);
+            redisService.set(balanceKey, ArithmeticUtils.add(balance.toString(), order.getPrice().toString()));
+
+            //3.3 这个消息队列用于更新余额变动明细和扣减数据库的余额
+            rabbitTemplate.convertAndSend(BALANCE_EVENT_EXCHANGE, BALANCE_CHANGE_QUEUE,
+                    BalanceUpdateDto.builder()
+                            .userId(order.getUserId())
+                            .orderId(orderId)
+                            .changeBalance(order.getPrice())
+                            .statusEnum(OrderStatusEnum.REFUNDED.getStatusCode())
+                            .build()
+            );
+        } finally {
+            //最后释放锁
+            lock.unlock();
+        }
+
+
     }
 
 }

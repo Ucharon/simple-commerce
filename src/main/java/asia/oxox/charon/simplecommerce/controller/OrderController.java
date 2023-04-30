@@ -6,10 +6,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.AllArgsConstructor;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @program: simple-commerce
@@ -30,6 +27,13 @@ public class OrderController {
     public Result orderGoods(@ApiParam(name = "商品id") @PathVariable Long goodsId) {
         Long orderId = orderService.orderGoods(goodsId);
         return Result.success().put("orderId", orderId);
+    }
+
+    @ApiOperation(value = "订单退款")
+    @PutMapping("/{orderId}")
+    public Result refundOrder(@ApiParam(name = "商品id") @PathVariable Long orderId) throws InterruptedException {
+        orderService.refundOrder(orderId);
+        return Result.success();
     }
 
 }

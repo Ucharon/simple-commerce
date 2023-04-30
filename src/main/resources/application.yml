@@ -28,6 +28,7 @@ spring:
 
   redis:
     host: localhost
+    password: ""
     port: 6379
     lettuce:
       pool:
@@ -35,6 +36,7 @@ spring:
         max-idle: 10
         min-idle: 1
         time-between-eviction-runs: 10s
+
 
   rabbitmq:
     host: 101.34.210.50

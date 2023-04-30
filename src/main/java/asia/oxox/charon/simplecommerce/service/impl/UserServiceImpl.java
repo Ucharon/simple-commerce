@@ -1,13 +1,19 @@
 package asia.oxox.charon.simplecommerce.service.impl;
 
+import asia.oxox.charon.simplecommerce.entity.DO.BalanceDetail;
 import asia.oxox.charon.simplecommerce.entity.DO.User;
 import asia.oxox.charon.simplecommerce.entity.DTO.UserLoginDto;
 import asia.oxox.charon.simplecommerce.entity.VO.UserInfoVo;
+import asia.oxox.charon.simplecommerce.entity.mq.BalanceUpdateDto;
+import asia.oxox.charon.simplecommerce.enums.OrderStatusEnum;
 import asia.oxox.charon.simplecommerce.enums.ResultCodeEnum;
 import asia.oxox.charon.simplecommerce.exception.BizException;
 import asia.oxox.charon.simplecommerce.mapper.UserMapper;
+import asia.oxox.charon.simplecommerce.service.BalanceDetailService;
 import asia.oxox.charon.simplecommerce.service.RedisService;
 import asia.oxox.charon.simplecommerce.service.UserService;
+import asia.oxox.charon.simplecommerce.utils.ArithmeticUtils;
+import asia.oxox.charon.simplecommerce.utils.RedisIdGenerator;
 import asia.oxox.charon.simplecommerce.utils.UserHolder;
 import cn.hutool.core.lang.UUID;
 import cn.hutool.crypto.digest.DigestUtil;
@@ -35,6 +41,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         implements UserService {
 
     private RedisService redisService;
+    private BalanceDetailService balanceDetailService;
+    private RedisIdGenerator redisIdGenerator;
 
     @Override
     public Map<String, String> login(UserLoginDto userDto) {
@@ -68,6 +76,30 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         user.setBalance(balance);
 
         return BeanCopyUtils.copyProperties(user, UserInfoVo.class);
+    }
+
+    @Override
+    public void updateBalance(BalanceUpdateDto balanceUpdateDto) {
+        //1. 扣减余额
+        BigDecimal balance = getById(balanceUpdateDto.getUserId()).getBalance();
+        lambdaUpdate()
+                .eq(User::getId, balanceUpdateDto.getUserId())
+                .setSql("balance=balance+" + balanceUpdateDto.getChangeBalance())
+                .update();
+
+        //2. 记录余额明细
+        Long id = redisIdGenerator.nextId("balance_detail");
+        BalanceDetail balanceDetail = BalanceDetail.builder()
+                .id(id)
+                .userId(balanceUpdateDto.getUserId())
+                .orderId(balanceUpdateDto.getOrderId())
+                .originalBalance(balance)
+                .finalBalance(ArithmeticUtils
+                        .add(balance.toString(), balanceUpdateDto.getChangeBalance().toString()))
+                .statusEnum(OrderStatusEnum.getByCode(balanceUpdateDto.getStatusEnum()))
+                .build();
+        //3. 存入数据库
+        balanceDetailService.save(balanceDetail);
     }
 }
 

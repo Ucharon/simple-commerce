@@ -7,19 +7,26 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Date;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * 
- * @TableName tb_order
+ * @TableName tb_balance_detail
  */
-@TableName(value ="tb_order")
+@TableName(value ="tb_balance_detail")
 @Data
-public class Order implements Serializable {
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class BalanceDetail implements Serializable {
     /**
-     * 主键-id
+     * id
      */
-    @TableId(type = IdType.AUTO)
+    @TableId
     private Long id;
 
     /**
@@ -28,19 +35,24 @@ public class Order implements Serializable {
     private Long userId;
 
     /**
-     * 订单状态
+     * 订单id
+     */
+    private Long orderId;
+
+    /**
+     * 原余额
+     */
+    private BigDecimal originalBalance;
+
+    /**
+     * 后余额
+     */
+    private BigDecimal finalBalance;
+
+    /**
+     * 变动原因状态
      */
     private OrderStatusEnum statusEnum;
-
-    /**
-     * 商品id
-     */
-    private Long goodsId;
-
-    /**
-     * 成交价
-     */
-    private BigDecimal price;
 
     /**
      * 删除标志（0代表未删除，1代表已删除）
@@ -52,17 +64,6 @@ public class Order implements Serializable {
      */
     @TableField(fill = FieldFill.INSERT)
     private LocalDateTime createTime;
-
-    /**
-     * 更新时间
-     */
-    @TableField(fill = FieldFill.INSERT_UPDATE)
-    private LocalDateTime updateTime;
-
-    /**
-     * 退款时间
-     */
-    private LocalDateTime refundTime;
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;

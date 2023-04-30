@@ -9,8 +9,7 @@ import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import static asia.oxox.charon.simplecommerce.constants.MQPrefixConstants.ORDER_EVENT_EXCHANGE;
-import static asia.oxox.charon.simplecommerce.constants.MQPrefixConstants.ORDER_CREATE_QUEUE;
+import static asia.oxox.charon.simplecommerce.constants.MQPrefixConstants.*;
 
 
 /**
@@ -25,6 +24,7 @@ public class RabbitConfig {
 
     /**
      * 使用JSON序列化机制，进行消息转换
+     *
      * @return
      */
     @Bean
@@ -48,6 +48,25 @@ public class RabbitConfig {
                 Binding.DestinationType.QUEUE,
                 ORDER_EVENT_EXCHANGE,
                 ORDER_CREATE_QUEUE,
+                null);
+    }
+
+    @Bean
+    public FanoutExchange balanceExchange() {
+        return new FanoutExchange(BALANCE_EVENT_EXCHANGE, true, false);
+    }
+
+    @Bean
+    public Queue balanceChangeQueue() {
+        return new Queue(BALANCE_CHANGE_QUEUE, true, false, false);
+    }
+
+    @Bean
+    public Binding balanceChangeQueueBinding() {
+        return new Binding(BALANCE_CHANGE_QUEUE,
+                Binding.DestinationType.QUEUE,
+                BALANCE_EVENT_EXCHANGE,
+                BALANCE_CHANGE_QUEUE,
                 null);
     }
 

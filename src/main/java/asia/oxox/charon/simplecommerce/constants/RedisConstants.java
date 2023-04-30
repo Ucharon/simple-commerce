@@ -25,5 +25,5 @@ public class RedisConstants {
     public static final Long CACHE_NULL_TTL = 120L;
 
     public static final String LOCK_ORDER_KEY = "lock:order:";
-
+    public static final Long LOCK_ORDER_TTL = 10L;
 }
