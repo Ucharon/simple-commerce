@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="asia.oxox.charon.simplecommerce.mapper.OrderMapper">
+
+    <resultMap id="BaseResultMap" type="asia.oxox.charon.simplecommerce.entity.DO.Order">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="userId" column="user_id" jdbcType="BIGINT"/>
+            <result property="statusEnum" column="status_enum" jdbcType="TINYINT"/>
+            <result property="goodsId" column="goods_id" jdbcType="BIGINT"/>
+            <result property="delFlag" column="del_flag" jdbcType="TINYINT"/>
+            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+            <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+            <result property="refundTime" column="refund_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+</mapper>

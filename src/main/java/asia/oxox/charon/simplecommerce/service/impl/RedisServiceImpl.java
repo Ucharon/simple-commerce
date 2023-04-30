@@ -2,7 +2,6 @@ package asia.oxox.charon.simplecommerce.service.impl;
 
 
 import asia.oxox.charon.simplecommerce.service.RedisService;
-import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.geo.Distance;
 import org.springframework.data.geo.GeoResults;
@@ -12,13 +11,11 @@ import org.springframework.data.redis.connection.RedisGeoCommands;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
+import org.springframework.data.redis.core.script.RedisScript;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -85,6 +82,11 @@ public class RedisServiceImpl implements RedisService {
     @Override
     public Long incr(String key, long delta) {
         return redisTemplate.opsForValue().increment(key, delta);
+    }
+
+    @Override
+    public Long incr(String key) {
+        return redisTemplate.opsForValue().increment(key);
     }
 
     @Override
@@ -334,6 +336,11 @@ public class RedisServiceImpl implements RedisService {
     public List<String> geoGetHash(String key, String... place) {
         return redisTemplate.opsForGeo()
                 .hash(key, place);
+    }
+
+    @Override
+    public <T> T execute(RedisScript<T> script, Object... args) {
+        return redisTemplate.execute(script, Collections.emptyList(), args);
     }
 
 }

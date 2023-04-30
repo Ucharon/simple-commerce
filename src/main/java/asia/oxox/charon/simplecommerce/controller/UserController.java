@@ -1,5 +1,6 @@
 package asia.oxox.charon.simplecommerce.controller;
 
+import asia.oxox.charon.simplecommerce.entity.DO.User;
 import asia.oxox.charon.simplecommerce.entity.DTO.UserLoginDto;
 import asia.oxox.charon.simplecommerce.entity.VO.Result;
 import asia.oxox.charon.simplecommerce.entity.VO.UserInfoVo;
@@ -38,6 +39,7 @@ public class UserController {
     @ApiOperation("获取个人信息")
     @GetMapping("/info")
     public Result getInfo() {
-        return Result.success(BeanCopyUtils.copyProperties(UserHolder.getUser(), UserInfoVo.class));
+        UserInfoVo userInfoVo = userService.getInfo();
+        return Result.success(userInfoVo);
     }
 }

@@ -1,14 +1,11 @@
 package asia.oxox.charon.simplecommerce.controller;
 
-import asia.oxox.charon.simplecommerce.entity.DTO.GoodsDto;
 import asia.oxox.charon.simplecommerce.entity.VO.Result;
-import asia.oxox.charon.simplecommerce.service.GoodsService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import asia.oxox.charon.simplecommerce.service.OrderService;
+import io.swagger.annotations.*;
 import lombok.AllArgsConstructor;
-import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -24,14 +21,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/order")
 public class OrderController {
 
-    private GoodsService goodsService;
+    private OrderService orderService;
 
-    @ApiOperation(value = "新增商品")
-    @PostMapping("/login")
-    public Result login(@RequestBody @Validated GoodsDto goodsDto) {
-        goodsService.saveGoods(goodsDto);
-        return Result.success();
+    @ApiOperation(value = "购买商品")
+    @PostMapping("/{goodsId}")
+    public Result orderGoods(@ApiParam(name = "商品id") @PathVariable Long goodsId) {
+        Long orderId = orderService.orderGoods(goodsId);
+        return Result.success(orderId);
     }
-
 
 }

@@ -6,6 +6,7 @@ import org.springframework.data.geo.Distance;
 import org.springframework.data.geo.GeoResults;
 import org.springframework.data.geo.Point;
 import org.springframework.data.redis.connection.RedisGeoCommands;
+import org.springframework.data.redis.core.script.RedisScript;
 
 import java.util.List;
 import java.util.Map;
@@ -102,6 +103,8 @@ public interface RedisService {
      * @return 返回递增后结果
      */
     Long incr(String key, long delta);
+
+    Long incr(String key);
 
     /**
      * 获取自增1后的 值
@@ -507,6 +510,8 @@ public interface RedisService {
      * @return 返回集合
      */
     List<String> geoGetHash(String key, String... place);
+
+    <T> T execute(RedisScript<T> script, Object... args);
 }
 
 

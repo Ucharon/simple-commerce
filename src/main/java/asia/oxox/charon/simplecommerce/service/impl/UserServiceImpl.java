@@ -2,23 +2,27 @@ package asia.oxox.charon.simplecommerce.service.impl;
 
 import asia.oxox.charon.simplecommerce.entity.DO.User;
 import asia.oxox.charon.simplecommerce.entity.DTO.UserLoginDto;
+import asia.oxox.charon.simplecommerce.entity.VO.UserInfoVo;
 import asia.oxox.charon.simplecommerce.enums.ResultCodeEnum;
 import asia.oxox.charon.simplecommerce.exception.BizException;
 import asia.oxox.charon.simplecommerce.mapper.UserMapper;
 import asia.oxox.charon.simplecommerce.service.RedisService;
 import asia.oxox.charon.simplecommerce.service.UserService;
+import asia.oxox.charon.simplecommerce.utils.UserHolder;
 import cn.hutool.core.lang.UUID;
 import cn.hutool.crypto.digest.DigestUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import xin.altitude.cms.common.util.BeanCopyUtils;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
-import static asia.oxox.charon.simplecommerce.constants.RedisConstants.LOGIN_USER_KEY;
-import static asia.oxox.charon.simplecommerce.constants.RedisConstants.LOGIN_USER_TTL;
+import static asia.oxox.charon.simplecommerce.constants.RedisConstants.*;
 
 /**
  * @author charon
@@ -51,8 +55,19 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
 
         //将token：id存入redis
         String key = LOGIN_USER_KEY + token;
-        redisService.set(key, user.getId(), LOGIN_USER_TTL);
+        redisService.set(key, user.getId(), LOGIN_USER_TTL, TimeUnit.MINUTES);
         return map;
+    }
+
+    @Override
+    public UserInfoVo getInfo() {
+        //封装基本信息
+        User user = UserHolder.getUser();
+        String key = USER_BALANCE_KEY + user.getId();
+        BigDecimal balance = (BigDecimal) redisService.get(key);
+        user.setBalance(balance);
+
+        return BeanCopyUtils.copyProperties(user, UserInfoVo.class);
     }
 }
 

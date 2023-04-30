@@ -23,7 +23,12 @@ public enum ResultCodeEnum {
      * 参数校验
      */
     ERROR_PARAM(900, "参数错误"),
-    ILLEGAL_FORMAT(901, "输入格式错误");
+    ILLEGAL_FORMAT(901, "输入格式错误"),
+
+    /**
+     * 购买商品
+     */
+    PURCHASE_FAILURE(1000, "您的余额或商品库存不足");
 
     //状态码
     private final Integer code;

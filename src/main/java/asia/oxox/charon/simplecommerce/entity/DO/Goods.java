@@ -1,12 +1,12 @@
 package asia.oxox.charon.simplecommerce.entity.DO;
 
-import cn.hutool.core.date.LocalDateTimeUtil;
 import com.baomidou.mybatisplus.annotation.*;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Date;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 /**
@@ -50,11 +50,13 @@ public class Goods implements Serializable {
     /**
      * 商品状态字段（0表示未下架，1表示已下架）
      */
+    @JsonIgnore
     private String status;
 
     /**
      * 删除标志（0代表未删除，1代表已删除）
      */
+    @JsonIgnore
     private Integer delFlag;
 
     /**

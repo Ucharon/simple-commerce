@@ -12,4 +12,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
 public interface GoodsService extends IService<Goods> {
 
     void saveGoods(GoodsDto goodsDto);
+
+    Goods getGoodsById(Long goodsId);
 }

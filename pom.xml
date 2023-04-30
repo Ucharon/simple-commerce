@@ -75,6 +75,11 @@
             <artifactId>ucode-cms-common</artifactId>
             <version>1.6.3.1-beta</version>
         </dependency>
+        <dependency>
+            <groupId>xin.altitude.cms</groupId>
+            <artifactId>ucode-cms-bitmap</artifactId>
+            <version>1.6.3.1-beta</version>
+        </dependency>
 
         <!--swagger-->
         <dependency>
@@ -95,6 +100,7 @@
             <artifactId>fastjson</artifactId>
             <version>1.2.83</version>
         </dependency>
+
 
     </dependencies>
 
