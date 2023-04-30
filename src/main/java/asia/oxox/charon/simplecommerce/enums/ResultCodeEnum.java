@@ -26,9 +26,10 @@ public enum ResultCodeEnum {
     ILLEGAL_FORMAT(901, "输入格式错误"),
 
     /**
-     * 购买商品
+     * 商品相关
      */
-    PURCHASE_FAILURE(1000, "您的余额或商品库存不足");
+    GOODS_NOT_EXIST(1000, "商品不存在"),
+    PURCHASE_FAILURE(1001, "您的余额或商品库存不足");
 
     //状态码
     private final Integer code;

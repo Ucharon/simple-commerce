@@ -43,6 +43,8 @@ spring:
     password: 123456
     listener:
       simple:
+        #自动签收auto  手动 manual
+        acknowledge-mode: manual
         retry:
           enabled: true
           max-attempts: 3 #最大重试次数

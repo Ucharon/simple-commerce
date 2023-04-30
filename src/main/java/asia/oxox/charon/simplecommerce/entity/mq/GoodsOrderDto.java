@@ -19,7 +19,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 public class GoodsOrderDto {
 
-    private Long orderId;
+    private Long id;
     private Long goodsId;
     private Long userId;
     private BigDecimal price;

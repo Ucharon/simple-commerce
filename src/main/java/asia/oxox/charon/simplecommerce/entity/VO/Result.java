@@ -6,12 +6,15 @@ import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import xin.altitude.cms.common.util.FieldFilterUtils;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import static asia.oxox.charon.simplecommerce.enums.ResultCodeEnum.SUCCESS;
 
@@ -33,8 +36,8 @@ public class Result {
     private String desc;
     @ApiModelProperty(value = "返回信息", allowEmptyValue = true)
     private Object data;
-    @ApiModelProperty(value = "额外字段", allowEmptyValue = true)
-    private LinkedHashMap<String, Object> map;
+    @ApiModelProperty(value = "额外信息", allowEmptyValue = true)
+    private Map<String, Object> map = new HashMap<>();
     @ApiModelProperty("是否成功")
     private Boolean success;
 
@@ -138,6 +141,11 @@ public class Result {
     @SafeVarargs
     public static <T> Result success(IPage<T> data, boolean isInclude, final SFunction<T, ? extends Serializable>... action) {
         return success(FieldFilterUtils.filterFields(data, isInclude, action));
+    }
+
+    public Result put(String key, Object value) {
+        map.put(key, value);
+        return this;
     }
 
     /**

@@ -2,7 +2,9 @@ package asia.oxox.charon.simplecommerce.controller;
 
 import asia.oxox.charon.simplecommerce.entity.VO.Result;
 import asia.oxox.charon.simplecommerce.service.OrderService;
-import io.swagger.annotations.*;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,7 +29,7 @@ public class OrderController {
     @PostMapping("/{goodsId}")
     public Result orderGoods(@ApiParam(name = "商品id") @PathVariable Long goodsId) {
         Long orderId = orderService.orderGoods(goodsId);
-        return Result.success(orderId);
+        return Result.success().put("orderId", orderId);
     }
 
 }

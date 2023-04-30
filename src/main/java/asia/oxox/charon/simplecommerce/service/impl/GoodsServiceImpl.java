@@ -13,6 +13,7 @@ import xin.altitude.cms.bitmap.annotation.BitMap;
 import xin.altitude.cms.common.util.BeanCopyUtils;
 
 import java.math.BigDecimal;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import static asia.oxox.charon.simplecommerce.constants.RedisConstants.*;
@@ -49,8 +50,10 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods>
         Goods goods = cacheClient.queryWithMutex(CACHE_GOODS_KEY, LOCK_GOODS_KEY,
                 goodsId, Goods.class, this::getById,
                 CACHE_GOODS_TTL, TimeUnit.HOURS);
-        Long stock = (Long) redisService.get(GOODS_STOCK_KEY + goods.getId());
-        goods.setStock(stock);
+        if (Objects.nonNull(goods)) {
+            Long stock = (Long) redisService.get(GOODS_STOCK_KEY + goods.getId());
+            goods.setStock(stock);
+        }
         return goods;
     }
 }

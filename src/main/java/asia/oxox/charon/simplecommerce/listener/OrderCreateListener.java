@@ -1,6 +1,8 @@
 package asia.oxox.charon.simplecommerce.listener;
 
 import asia.oxox.charon.simplecommerce.entity.mq.GoodsOrderDto;
+import asia.oxox.charon.simplecommerce.enums.ResultCodeEnum;
+import asia.oxox.charon.simplecommerce.exception.BizException;
 import asia.oxox.charon.simplecommerce.service.OrderService;
 import com.rabbitmq.client.Channel;
 import lombok.AllArgsConstructor;
@@ -11,6 +13,8 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.boot.autoconfigure.amqp.RabbitProperties;
 import org.springframework.stereotype.Component;
 
+
+import java.io.IOException;
 
 import static asia.oxox.charon.simplecommerce.constants.MQPrefixConstants.ORDER_CREATE_QUEUE;
 
@@ -29,13 +33,15 @@ public class OrderCreateListener {
     private OrderService orderService;
 
     @RabbitHandler
-    public void listener(GoodsOrderDto goodsOrderDto, Channel channel, Message message) {
+    public void listener(GoodsOrderDto goodsOrderDto, Channel channel, Message message) throws IOException {
         log.info("准备创建订单的详细信息......");
 
         try {
             orderService.createOrder(goodsOrderDto);
+            channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
         } catch (Exception e) {
-
+            channel.basicReject(message.getMessageProperties().getDeliveryTag(), true);
+            log.error(e.getMessage());
         }
     }
 

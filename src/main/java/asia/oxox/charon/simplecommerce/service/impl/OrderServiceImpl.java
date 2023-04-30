@@ -3,10 +3,12 @@ package asia.oxox.charon.simplecommerce.service.impl;
 import asia.oxox.charon.simplecommerce.entity.DO.Goods;
 import asia.oxox.charon.simplecommerce.entity.DO.User;
 import asia.oxox.charon.simplecommerce.entity.mq.GoodsOrderDto;
+import asia.oxox.charon.simplecommerce.enums.OrderStatusEnum;
 import asia.oxox.charon.simplecommerce.enums.ResultCodeEnum;
 import asia.oxox.charon.simplecommerce.exception.BizException;
 import asia.oxox.charon.simplecommerce.service.GoodsService;
 import asia.oxox.charon.simplecommerce.service.RedisService;
+import asia.oxox.charon.simplecommerce.service.UserService;
 import asia.oxox.charon.simplecommerce.utils.RedisIdGenerator;
 import asia.oxox.charon.simplecommerce.utils.UserHolder;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -14,13 +16,19 @@ import asia.oxox.charon.simplecommerce.entity.DO.Order;
 import asia.oxox.charon.simplecommerce.service.OrderService;
 import asia.oxox.charon.simplecommerce.mapper.OrderMapper;
 import lombok.AllArgsConstructor;
+import org.redisson.api.RedissonClient;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import xin.altitude.cms.common.util.BeanCopyUtils;
+
+import java.util.Optional;
 
 import static asia.oxox.charon.simplecommerce.constants.MQPrefixConstants.ORDER_CREATE_QUEUE;
 import static asia.oxox.charon.simplecommerce.constants.MQPrefixConstants.ORDER_EVENT_EXCHANGE;
+import static asia.oxox.charon.simplecommerce.constants.RedisConstants.LOCK_ORDER_KEY;
 
 /**
  * @author charon
@@ -36,6 +44,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order>
     private RedisService redisService;
     private RabbitTemplate rabbitTemplate;
     private GoodsService goodsService;
+    private UserService userService;
 
     private static final DefaultRedisScript<Long> ORDER_SCRIPT;
 
@@ -49,7 +58,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order>
     public Long orderGoods(Long goodsId) {
         //1. 获取用户与商品信息
         User user = UserHolder.getUser();
-        Goods goods = goodsService.getGoodsById(goodsId);
+        Goods goods = Optional.ofNullable(goodsService.getGoodsById(goodsId))
+                .orElseThrow(() -> new BizException(ResultCodeEnum.GOODS_NOT_EXIST));
         //2. 获取订单id
         Long orderId = redisIdGenerator.nextId("order");
         //3. 执行lua脚本
@@ -66,18 +76,36 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order>
         }
         //4.2 下单成功，创建消息队列
         rabbitTemplate.convertAndSend(ORDER_EVENT_EXCHANGE, ORDER_CREATE_QUEUE,
-                GoodsOrderDto.builder().orderId(orderId)
+                GoodsOrderDto.builder().id(orderId)
                         .goodsId(goodsId)
                         .userId(user.getId())
                         .price(goods.getPrice())
                         .build());
 
-        return null;
+        return orderId;
     }
 
     @Override
+    @Transactional
     public void createOrder(GoodsOrderDto goodsOrderDto) {
-        System.out.println(goodsOrderDto);
+        //1. 扣减库存
+        goodsService.lambdaUpdate()
+                .eq(Goods::getId, goodsOrderDto.getGoodsId())
+                .setSql("stock=stock-1")
+                .update();
+
+        //2. 扣减余额
+        userService.lambdaUpdate()
+                .eq(User::getId, goodsOrderDto.getUserId())
+                .setSql("balance=balance-" + goodsOrderDto.getPrice())
+                .update();
+
+        //3. 初始化订单状态
+        Order order = BeanCopyUtils.copyProperties(goodsOrderDto, Order.class);
+        order.setStatusEnum(OrderStatusEnum.COMPLETED);
+
+        //4. 创建订单
+        save(order);
     }
 
 }

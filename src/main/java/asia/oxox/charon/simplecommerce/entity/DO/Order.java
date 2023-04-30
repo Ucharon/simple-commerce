@@ -1,9 +1,8 @@
 package asia.oxox.charon.simplecommerce.entity.DO;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import asia.oxox.charon.simplecommerce.enums.OrderStatusEnum;
+import com.baomidou.mybatisplus.annotation.*;
+
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Date;
@@ -30,7 +29,7 @@ public class Order implements Serializable {
     /**
      * 订单状态
      */
-    private Integer statusEnum;
+    private OrderStatusEnum statusEnum;
 
     /**
      * 商品id
@@ -45,11 +44,13 @@ public class Order implements Serializable {
     /**
      * 创建时间
      */
+    @TableField(fill = FieldFill.INSERT)
     private LocalDateTime createTime;
 
     /**
      * 更新时间
      */
+    @TableField(fill = FieldFill.INSERT_UPDATE)
     private LocalDateTime updateTime;
 
     /**
