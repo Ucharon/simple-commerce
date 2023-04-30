@@ -1,6 +1,7 @@
 package asia.oxox.charon.simplecommerce.service;
 
 import asia.oxox.charon.simplecommerce.entity.DO.Order;
+import asia.oxox.charon.simplecommerce.entity.mq.GoodsOrderDto;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
@@ -11,4 +12,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
 public interface OrderService extends IService<Order> {
 
     Long orderGoods(Long goodsId);
+
+    void createOrder(GoodsOrderDto goodsOrderDto);
 }

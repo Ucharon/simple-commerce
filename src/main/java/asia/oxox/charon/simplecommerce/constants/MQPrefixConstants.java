@@ -11,12 +11,12 @@ public class MQPrefixConstants {
     /**
      * 订单消息队列交换机
      */
-    public static final String ORDER_EXCHANGE = "order_exchange";
+    public static final String ORDER_EVENT_EXCHANGE = "order_event_exchange";
 
     /**
      * 订单消息队列
      */
-    public static final String ORDER_QUEUE = "order_queue";
+    public static final String ORDER_CREATE_QUEUE = "order_create_queue";
 
 
 }

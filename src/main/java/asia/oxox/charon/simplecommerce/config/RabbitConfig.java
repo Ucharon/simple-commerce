@@ -1,14 +1,16 @@
 package asia.oxox.charon.simplecommerce.config;
 
 import lombok.AllArgsConstructor;
+import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.FanoutExchange;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
+import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import static asia.oxox.charon.simplecommerce.constants.MQPrefixConstants.ORDER_EXCHANGE;
-import static asia.oxox.charon.simplecommerce.constants.MQPrefixConstants.ORDER_QUEUE;
+import static asia.oxox.charon.simplecommerce.constants.MQPrefixConstants.ORDER_EVENT_EXCHANGE;
+import static asia.oxox.charon.simplecommerce.constants.MQPrefixConstants.ORDER_CREATE_QUEUE;
 
 
 /**
@@ -26,21 +28,28 @@ public class RabbitConfig {
      * @return
      */
     @Bean
-    public Jackson2JsonMessageConverter messageConverter() {
+    public MessageConverter jsonMessageConverter() {
         return new Jackson2JsonMessageConverter();
-    }
-
-
-    @Bean
-    public Queue orderQueue() {
-        return new Queue(ORDER_QUEUE, true);
     }
 
     @Bean
     public FanoutExchange orderExchange() {
-        return new FanoutExchange(ORDER_EXCHANGE, true, false);
+        return new FanoutExchange(ORDER_EVENT_EXCHANGE, true, false);
     }
 
+    @Bean
+    public Queue orderCreateQueue() {
+        return new Queue(ORDER_CREATE_QUEUE, true, false, false);
+    }
+
+    @Bean
+    public Binding orderCreateQueueBinding() {
+        return new Binding(ORDER_CREATE_QUEUE,
+                Binding.DestinationType.QUEUE,
+                ORDER_EVENT_EXCHANGE,
+                ORDER_CREATE_QUEUE,
+                null);
+    }
 
 
 }

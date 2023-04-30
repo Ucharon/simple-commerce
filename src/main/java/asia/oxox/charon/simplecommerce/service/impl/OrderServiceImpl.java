@@ -2,6 +2,7 @@ package asia.oxox.charon.simplecommerce.service.impl;
 
 import asia.oxox.charon.simplecommerce.entity.DO.Goods;
 import asia.oxox.charon.simplecommerce.entity.DO.User;
+import asia.oxox.charon.simplecommerce.entity.mq.GoodsOrderDto;
 import asia.oxox.charon.simplecommerce.enums.ResultCodeEnum;
 import asia.oxox.charon.simplecommerce.exception.BizException;
 import asia.oxox.charon.simplecommerce.service.GoodsService;
@@ -18,15 +19,18 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.stereotype.Service;
 
+import static asia.oxox.charon.simplecommerce.constants.MQPrefixConstants.ORDER_CREATE_QUEUE;
+import static asia.oxox.charon.simplecommerce.constants.MQPrefixConstants.ORDER_EVENT_EXCHANGE;
+
 /**
-* @author charon
-* @description 针对表【tb_order】的数据库操作Service实现
-* @createDate 2023-04-30 01:47:38
-*/
+ * @author charon
+ * @description 针对表【tb_order】的数据库操作Service实现
+ * @createDate 2023-04-30 01:47:38
+ */
 @Service
 @AllArgsConstructor
 public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order>
-    implements OrderService{
+        implements OrderService {
 
     private RedisIdGenerator redisIdGenerator;
     private RedisService redisService;
@@ -61,14 +65,19 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order>
             throw new BizException(ResultCodeEnum.PURCHASE_FAILURE);
         }
         //4.2 下单成功，创建消息队列
-        //rabbitTemplate.convertAndSend(ORDER_EXCHANGE, "*",
-        //        GoodsOrderDto.builder().orderId(orderId)
-        //                .goodsId(goodsId)
-        //                .userId(user.getId())
-        //                .price(goods.getPrice())
-        //                .build());
+        rabbitTemplate.convertAndSend(ORDER_EVENT_EXCHANGE, ORDER_CREATE_QUEUE,
+                GoodsOrderDto.builder().orderId(orderId)
+                        .goodsId(goodsId)
+                        .userId(user.getId())
+                        .price(goods.getPrice())
+                        .build());
 
         return null;
+    }
+
+    @Override
+    public void createOrder(GoodsOrderDto goodsOrderDto) {
+        System.out.println(goodsOrderDto);
     }
 
 }
