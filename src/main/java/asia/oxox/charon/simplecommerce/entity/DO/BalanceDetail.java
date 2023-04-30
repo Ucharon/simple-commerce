@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -57,6 +58,7 @@ public class BalanceDetail implements Serializable {
     /**
      * 删除标志（0代表未删除，1代表已删除）
      */
+    @JsonIgnore
     private Integer delFlag;
 
     /**

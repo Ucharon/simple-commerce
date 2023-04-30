@@ -1,17 +1,17 @@
 package asia.oxox.charon.simplecommerce.controller;
 
-import asia.oxox.charon.simplecommerce.entity.DO.User;
+import asia.oxox.charon.simplecommerce.entity.DTO.BalanceDetailPageDto;
 import asia.oxox.charon.simplecommerce.entity.DTO.UserLoginDto;
+import asia.oxox.charon.simplecommerce.entity.VO.PageVo;
 import asia.oxox.charon.simplecommerce.entity.VO.Result;
 import asia.oxox.charon.simplecommerce.entity.VO.UserInfoVo;
+import asia.oxox.charon.simplecommerce.service.BalanceDetailService;
 import asia.oxox.charon.simplecommerce.service.UserService;
-import asia.oxox.charon.simplecommerce.utils.UserHolder;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import xin.altitude.cms.common.util.BeanCopyUtils;
 
 import java.util.Map;
 
@@ -28,6 +28,7 @@ import java.util.Map;
 public class UserController {
 
     private UserService userService;
+    private BalanceDetailService balanceDetailService;
 
     @ApiOperation(value = "登录操作")
     @PostMapping("/login")
@@ -41,5 +42,12 @@ public class UserController {
     public Result getInfo() {
         UserInfoVo userInfoVo = userService.getInfo();
         return Result.success(userInfoVo);
+    }
+
+    @ApiOperation("获取个人余额变动消息")
+    @PostMapping("/balance/detail/page")
+    public Result balanceDetailPage(@RequestBody BalanceDetailPageDto balanceDetailDto) {
+        PageVo<?> pageVo = balanceDetailService.balanceDetailPage(balanceDetailDto);
+        return Result.success(pageVo);
     }
 }

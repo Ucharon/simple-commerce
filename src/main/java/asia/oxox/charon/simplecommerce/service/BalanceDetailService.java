@@ -1,6 +1,8 @@
 package asia.oxox.charon.simplecommerce.service;
 
 import asia.oxox.charon.simplecommerce.entity.DO.BalanceDetail;
+import asia.oxox.charon.simplecommerce.entity.DTO.BalanceDetailPageDto;
+import asia.oxox.charon.simplecommerce.entity.VO.PageVo;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
@@ -10,4 +12,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
 */
 public interface BalanceDetailService extends IService<BalanceDetail> {
 
+    PageVo<?> balanceDetailPage(BalanceDetailPageDto balanceDetailDto);
 }

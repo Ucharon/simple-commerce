@@ -6,7 +6,6 @@ import asia.oxox.charon.simplecommerce.service.RedisService;
 import asia.oxox.charon.simplecommerce.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
