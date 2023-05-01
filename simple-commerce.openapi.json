@@ -1,0 +1,562 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "simple-commerce",
+    "description": "",
+    "version": "1.0.0"
+  },
+  "tags": [
+    {
+      "name": "商品的具体操作"
+    },
+    {
+      "name": "用户的具体操作"
+    },
+    {
+      "name": "订单的具体操作"
+    }
+  ],
+  "paths": {
+    "/user/login": {
+      "post": {
+        "summary": "登录操作",
+        "x-apifox-folder": "用户的具体操作",
+        "x-apifox-status": "released",
+        "deprecated": false,
+        "description": "登录接口",
+        "tags": [
+          "用户的具体操作"
+        ],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserLoginDto",
+                "description": ""
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Result",
+                  "description": ""
+                },
+                "examples": {
+                  "1": {
+                    "summary": "成功示例",
+                    "value": {
+                      "code": 0,
+                      "desc": "",
+                      "data": {},
+                      "map": {
+                        "": {}
+                      },
+                      "success": false
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-run-in-apifox": "https://www.apifox.cn/web/project/2669432/apis/api-78952763-run"
+      }
+    },
+    "/user/info": {
+      "get": {
+        "summary": "获取个人信息",
+        "x-apifox-folder": "用户的具体操作",
+        "x-apifox-status": "released",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "用户的具体操作"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Result",
+                  "description": ""
+                },
+                "examples": {
+                  "1": {
+                    "summary": "成功示例",
+                    "value": {
+                      "code": 0,
+                      "desc": "",
+                      "data": {},
+                      "map": {
+                        "": {}
+                      },
+                      "success": false
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-run-in-apifox": "https://www.apifox.cn/web/project/2669432/apis/api-78953328-run"
+      }
+    },
+    "/goods/{goodsId}": {
+      "get": {
+        "summary": "根据id查询商品",
+        "x-apifox-folder": "商品的具体操作",
+        "x-apifox-status": "released",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "商品的具体操作"
+        ],
+        "parameters": [
+          {
+            "name": "goodsId",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Result",
+                  "description": ""
+                },
+                "examples": {
+                  "1": {
+                    "summary": "成功示例",
+                    "value": {
+                      "code": 0,
+                      "desc": "",
+                      "data": {},
+                      "map": {
+                        "": {}
+                      },
+                      "success": false
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-run-in-apifox": "https://www.apifox.cn/web/project/2669432/apis/api-78956044-run"
+      }
+    },
+    "/goods/login": {
+      "post": {
+        "summary": "新增商品",
+        "x-apifox-folder": "商品的具体操作",
+        "x-apifox-status": "released",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "商品的具体操作"
+        ],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GoodsDto",
+                "description": ""
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Result",
+                  "description": ""
+                },
+                "examples": {
+                  "1": {
+                    "summary": "成功示例",
+                    "value": {
+                      "code": 0,
+                      "desc": "",
+                      "data": {},
+                      "map": {
+                        "": {}
+                      },
+                      "success": false
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-run-in-apifox": "https://www.apifox.cn/web/project/2669432/apis/api-78956045-run"
+      }
+    },
+    "/order/{goodsId}": {
+      "post": {
+        "summary": "购买商品",
+        "x-apifox-folder": "订单的具体操作",
+        "x-apifox-status": "released",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "订单的具体操作"
+        ],
+        "parameters": [
+          {
+            "name": "goodsId",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Result",
+                  "description": ""
+                },
+                "examples": {
+                  "1": {
+                    "summary": "成功示例",
+                    "value": {
+                      "code": 0,
+                      "desc": "",
+                      "data": {},
+                      "map": {
+                        "": {}
+                      },
+                      "success": false
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-run-in-apifox": "https://www.apifox.cn/web/project/2669432/apis/api-78956104-run"
+      }
+    },
+    "/order/{orderId}": {
+      "put": {
+        "summary": "订单退款",
+        "x-apifox-folder": "订单的具体操作",
+        "x-apifox-status": "released",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "订单的具体操作"
+        ],
+        "parameters": [
+          {
+            "name": "orderId",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Result",
+                  "description": ""
+                },
+                "examples": {
+                  "1": {
+                    "summary": "成功示例",
+                    "value": {
+                      "code": 0,
+                      "desc": "",
+                      "data": {},
+                      "map": {
+                        "": {}
+                      },
+                      "success": false
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-run-in-apifox": "https://www.apifox.cn/web/project/2669432/apis/api-78971447-run"
+      }
+    },
+    "/user/balance/detail/page": {
+      "post": {
+        "summary": "获取个人余额变动消息",
+        "x-apifox-folder": "用户的具体操作",
+        "x-apifox-status": "released",
+        "deprecated": false,
+        "description": "",
+        "tags": [
+          "用户的具体操作"
+        ],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BalanceDetailPageDto",
+                "description": ""
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Result",
+                  "description": ""
+                },
+                "examples": {
+                  "1": {
+                    "summary": "成功示例",
+                    "value": {
+                      "code": 0,
+                      "desc": "",
+                      "data": {},
+                      "map": {
+                        "": {}
+                      },
+                      "success": false
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-run-in-apifox": "https://www.apifox.cn/web/project/2669432/apis/api-78971740-run"
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "BalanceDetailPageDto": {
+        "type": "object",
+        "properties": {
+          "statusEnum": {
+            "type": "string",
+            "description": " 枚举说明: COMPLETED :已完成 1\nREFUNDED :已退款 2",
+            "enum": [
+              "COMPLETED",
+              "REFUNDED"
+            ]
+          },
+          "pageNum": {
+            "type": "integer",
+            "description": "变动原因状态"
+          },
+          "pageSize": {
+            "type": "integer",
+            "description": "变动原因状态"
+          }
+        },
+        "x-apifox-orders": [
+          "statusEnum",
+          "pageNum",
+          "pageSize"
+        ],
+        "required": [
+          "pageNum",
+          "pageSize"
+        ],
+        "x-apifox-ignore-properties": [],
+        "x-apifox-folder": ""
+      },
+      "BalanceDetailDto": {
+        "type": "object",
+        "properties": {
+          "statusEnum": {
+            "type": "string",
+            "description": " 枚举说明: COMPLETED :已完成 1\nREFUNDED :已退款 2",
+            "enum": [
+              "COMPLETED",
+              "REFUNDED"
+            ]
+          }
+        },
+        "x-apifox-orders": [
+          "statusEnum"
+        ],
+        "x-apifox-ignore-properties": [],
+        "x-apifox-folder": ""
+      },
+      "Map«Object»": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "$ref": "#/components/schemas/key",
+            "description": "map.key"
+          }
+        },
+        "x-apifox-orders": [
+          "key"
+        ],
+        "x-apifox-ignore-properties": [],
+        "x-apifox-folder": ""
+      },
+      "GoodsDto": {
+        "type": "object",
+        "properties": {
+          "details": {
+            "type": "string",
+            "description": "商品名称"
+          },
+          "name": {
+            "type": "string",
+            "description": "详细信息"
+          },
+          "price": {
+            "type": "number",
+            "description": "价格"
+          },
+          "stock": {
+            "type": "integer",
+            "description": "库存"
+          },
+          "thumbnail": {
+            "type": "string",
+            "description": "缩略图地址"
+          }
+        },
+        "x-apifox-orders": [
+          "details",
+          "name",
+          "price",
+          "stock",
+          "thumbnail"
+        ],
+        "x-apifox-ignore-properties": [],
+        "x-apifox-folder": ""
+      },
+      "UserLoginDto": {
+        "type": "object",
+        "properties": {
+          "userName": {
+            "type": "string",
+            "description": "用户名"
+          },
+          "password": {
+            "type": "string",
+            "description": "密码"
+          }
+        },
+        "x-apifox-orders": [
+          "userName",
+          "password"
+        ],
+        "required": [
+          "userName",
+          "password"
+        ],
+        "x-apifox-ignore-properties": [],
+        "x-apifox-folder": ""
+      },
+      "Result": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "状态码"
+          },
+          "desc": {
+            "type": "string",
+            "description": "描述信息"
+          },
+          "data": {
+            "$ref": "#/components/schemas/Object",
+            "description": "返回信息"
+          },
+          "map": {
+            "$ref": "#/components/schemas/Map%C2%ABObject%C2%BB",
+            "description": "额外信息",
+            "default": "new HashMap<>()"
+          },
+          "success": {
+            "type": "boolean",
+            "description": "是否成功"
+          }
+        },
+        "x-apifox-orders": [
+          "code",
+          "desc",
+          "data",
+          "map",
+          "success"
+        ],
+        "x-apifox-ignore-properties": [],
+        "x-apifox-folder": ""
+      },
+      "LinkedHashMap«Object»": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "$ref": "#/components/schemas/key",
+            "description": "map.key"
+          }
+        },
+        "x-apifox-orders": [
+          "key"
+        ],
+        "x-apifox-ignore-properties": [],
+        "x-apifox-folder": ""
+      },
+      "key": {
+        "type": "object",
+        "properties": {},
+        "x-apifox-orders": [],
+        "x-apifox-ignore-properties": [],
+        "x-apifox-folder": ""
+      },
+      "Object": {
+        "type": "object",
+        "properties": {},
+        "x-apifox-orders": [],
+        "x-apifox-ignore-properties": [],
+        "x-apifox-folder": ""
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8088",
+      "description": "开发环境"
+    }
+  ]
+}
